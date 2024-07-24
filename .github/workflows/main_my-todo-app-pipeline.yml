@@ -61,6 +61,12 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: Check Secrets
+        run: |
+          echo "MONGO_URI: ${{ secrets.MONGO_URI }}"
+          echo "PASSWORD: ${{ secrets.PASSWORD }}"
+          echo "SECRET: ${{ secrets.SECRET }}"
+
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
@@ -69,4 +75,4 @@ jobs:
 
       - name: Set environment variables in Azure App Service
         run: |
-          az webapp config appsettings set --resource-group DefaultResourceGroup-EUS --name my-todo-test --settings MONGO_URI=${{ secrets.MONGO_URI }} PASSWORD=${{ secrets.PASSWORD }} SECRET=${{ secrets.SECRET }}
+          az webapp config appsettings set --resource-group DefaultResourceGroup-EUS --name my-todo-test --settings "MONGO_URI=${{ secrets.MONGO_URI }}" "PASSWORD=${{ secrets.PASSWORD }}" "SECRET=${{ secrets.SECRET }}"
