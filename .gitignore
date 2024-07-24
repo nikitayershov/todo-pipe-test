@@ -1,0 +1,5 @@
+dist
+www
+static-frontend
+server/.env
+node_modules
