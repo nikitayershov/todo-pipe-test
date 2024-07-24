@@ -64,5 +64,5 @@ jobs:
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'my-todo-app-pipeline'
+          app-name: 'my-todo-test'
           package: server.zip
