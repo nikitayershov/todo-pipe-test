@@ -25,10 +25,10 @@ jobs:
           npm run build
           cd ..
 
-      - name: Move client build to server/src
+      - name: Move client build to server/src/dist
         run: |
-          mkdir -p server/src
-          cp -a client/dist/. server/src
+          mkdir -p server/src/dist
+          cp -a client/dist/. server/src/dist
 
       - name: Install server dependencies
         run: |
@@ -37,7 +37,10 @@ jobs:
           cd ..
 
       - name: Zip server for deployment
-        run: zip -r server.zip server
+        run: |
+          cd server
+          zip -r ../server.zip .
+          cd ..
 
       - name: Upload server artifact
         uses: actions/upload-artifact@v2
@@ -61,12 +64,6 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Check Secrets
-        run: |
-          echo "MONGO_URI: ${{ secrets.MONGO_URI }}"
-          echo "PASSWORD: ${{ secrets.PASSWORD }}"
-          echo "SECRET: ${{ secrets.SECRET }}"
-
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
@@ -75,11 +72,8 @@ jobs:
 
       - name: Set environment variables in Azure App Service
         run: |
-          echo "Setting environment variables in Azure App Service..."
-          az webapp config appsettings set --resource-group DefaultResourceGroup-EUS --name my-todo-test --settings "MONGO_URI=${{ secrets.MONGO_URI }}" "PASSWORD=${{ secrets.PASSWORD }}" "SECRET=${{ secrets.SECRET }}"
-        continue-on-error: true
+          az webapp config appsettings set --resource-group DefaultResourceGroup-EUS --name my-todo-test --settings MONGO_URI=${{ secrets.MONGO_URI }} PASSWORD=${{ secrets.PASSWORD }} SECRET=${{ secrets.SECRET }}
 
       - name: Verify environment variables
         run: |
-          echo "Verifying environment variables..."
           az webapp config appsettings list --resource-group DefaultResourceGroup-EUS --name my-todo-test
